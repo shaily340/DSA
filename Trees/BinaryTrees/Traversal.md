@@ -153,3 +153,52 @@ vector <int> postOrder(Node* root)
 }
 ```
 ___________
+### Breadth First Traversals:
+                  10
+                 /  \
+                20   30
+               /  \    \
+              40   60    80
+            /              \
+           100             90
+
+```
+printLevelorder(tree)
+1) Create an empty queue q
+2) temp_node = root /*start from root*/
+3) Loop while temp_node is not NULL
+    a) print temp_node->data.
+    b) Enqueue temp_node’s children (first left then right children) to q
+    c) Dequeue a node from q and assign it’s value to temp_node
+```
+
+```
+void printLevelOrder(Node *root) 
+{ 
+    // Base Case 
+    if (root == NULL)  return; 
+  
+    // Create an empty queue for level order traversal 
+    queue<Node *> q; 
+  
+    // Enqueue Root and initialize height 
+    q.push(root); 
+  
+    while (q.empty() == false) 
+    { 
+        // Print front of queue and remove it from queue 
+        Node *node = q.front(); 
+        cout << node->data << " "; 
+        q.pop(); 
+  
+        /* Enqueue left child */
+        if (node->left != NULL) 
+            q.push(node->left); 
+  
+        /*Enqueue right child */
+        if (node->right != NULL) 
+            q.push(node->right); 
+    } 
+} 
+```
+_____
