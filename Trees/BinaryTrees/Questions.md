@@ -339,3 +339,180 @@ node* LCA(node* root,node* a,node* b)
 ```
 ### 18.Construct the binary tree from the given inorder and preorder traversal.
 ```
+node* construct(int inorder[],int preorder[],int st,int end)
+{
+    static int pre=0;
+    if(st<end)
+    return NULL;
+    node* root=new node;
+    int in=m[pre];
+    root->data=preorder[pre++];
+    if(st==end)
+    return root;
+    root->left=construct(inorder,preorder,st,in-1);
+    root->right=construct(inorder,preorder,in+1,end);
+    return root;
+}
+```
+### 19.Print all ancestors of a node in a Binary Tree.
+```
+bool printAncestors(struct node *root, int target) 
+{ 
+  if (root == NULL) 
+     return false; 
+  
+  if (root->data == target) 
+     return true; 
+  if ( printAncestors(root->left, target) || 
+       printAncestors(root->right, target) ) 
+  { 
+    cout << root->data << " "; 
+    return true; 
+  } 
+  return false; 
+} 
+```
+### 20.Give an algorithm to print a binary tree in zigzag order.
+```
+void zigzag(node* root)
+{
+    node* temp;
+    int lefttoright=1;
+    if(!root)
+    return ;
+    stack<node*>s1,s2;
+    s1.push(root);
+    while(!s1.empty())
+    {
+        temp=s1.top();
+        s1.pop();
+        if(temp)
+        {
+            if(lefttoright)
+            {
+                s2.push(temp->left);
+                s2.push(temp->right);
+            }
+            else{
+                s2.push(temp->right);
+                s2.push(temp->left);
+            }
+        }
+        if(s1.empty())
+        {
+            lefttoright=1-lefttoright;
+            swap(s1,s2);
+        }
+    }
+}
+```
+### 21. Give an algorithm for finding the vertical sum of a binary tree.
+```
+void vertical_sum(Node* root,map<int,int> &mp,int col)
+{
+    if(!root)
+    return ;
+    vertical_sum(root->left,mp,col-1);
+    mp[col]+=root->data;
+    vertical_sum(root->right,mp,col+1);
+}
+vector <int> verticalSum(Node *root) {
+    // add code here.
+    map<int,int>mp;
+    vector<int>ans;
+    vertical_sum(root,mp,0);
+    for(auto x:mp)
+    ans.push_back(x.second);
+    return ans;
+}
+```
+### 22.Given a binary tree with three pointers (left,right and nextsibling).Populate the nextsibling pointers.
+A.Iterative:
+```
+void fillSibling(node* root)
+{
+    if(!root)
+    return ;
+    queue<node* >q;
+    q.push(root);
+    q.push(NULL);
+    while(!q.empty())
+    {
+        node* temp=q.front();
+        q.pop();
+        if(!temp)
+        {
+            if(!q.empty())
+            q.push(NULL);
+        }
+        else
+        {
+            temp->nextsibling=q.front();
+            if(temp->left)
+            q.push(temp->left);
+            if(temp->right)
+            q.push(temp->right);
+        }
+    }
+}
+```
+B.Recursive:
+```
+void fillSibling(node* root)
+{
+    if(!root)
+    return;
+    if(root->left)
+    root->left->nextsibling=root->right;
+    if(root->right)
+    root->right->nextsibling=(root->nextsibling)?root->nextsibling->left:NULL;
+    fillSibling(root->left);
+    fillSibling(root->right);
+}
+```
+The above method works only when the current node's next sibling pointer is populated.
+General method:
+```
+void connect(node* root)
+{
+    if(!root)
+    return ;
+    root->nextsibling=NULL;
+    connectrec(root);
+}
+void connectrec(node* root)
+{
+    if(!root)
+    return ;
+    if(root->left)
+    {
+        if(root->right)
+        root->left->nextsibling=root->right;
+        else
+        root->left->nextsibling=next(root);
+        if(root->right)
+        root->right->nextsibling=next(root);
+        connectrec(root->left);
+    }
+    else if(root->right)
+    {
+        root->right->nextsibling=next(root);
+        connectrec(root->right);
+    }
+    else
+    connectrec(next(root));
+}
+node* next(node* root)
+{
+    node* temp=root->nextsibling;
+    while(temp)
+    {
+        if(temp->left)
+        return temp->left;
+        if(temp->right)
+        return temp->right;
+        temp=temp->nextsibling;
+    }
+    return NULL;
+}
+```
